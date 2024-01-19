@@ -4,6 +4,10 @@ import com.example.article.dto.ArticleDto;
 import com.example.article.entity.Article;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -40,6 +44,47 @@ public class ArticleService {
             articleList.add(ArticleDto.fromEntity(entity));
         }
         return articleList;
+    }
+
+    // READ ALL PAGED
+    // page : 몇번쨰 페이지인지
+    // limit: 한 페이지에 몇개가 들어갈지
+    public List<ArticleDto> readAllPaged(Integer page, Integer limit){
+        List<ArticleDto> articleDtoList = new ArrayList<>();
+        // 1. findAll의 결과 List를 일부만 반환하는 방법
+       /* List<Article> articles = repository.findAll();
+        for (int i = 0; i < 20; i++) {
+            articleDtoList.add(
+            ArticleDto.fromEntity(articles.get(i)));
+        }*/
+        // 2. Query Method를 이용해서 특정 갯수 이후 게시글들만 조회하게 한다.
+        /*List<Article> articles = repository.findTop20ByOrderByIdDesc();
+        for (Article entity: articles){
+            articleDtoList.add(ArticleDto.fromEntity(entity));
+        }*/
+
+        return articleDtoList;
+    }
+
+    public Page<ArticleDto> readAllPagination(Integer page, Integer limit) {
+        // 3. JPA PagingAndSortingRepository
+        Pageable pageable = PageRequest
+                .of(
+                page -1,
+                limit,
+                Sort.by(Sort.Direction.DESC, "id"
+                ));
+        Page<Article> articleEntityPage = repository.findAll(pageable);
+        /*Page<ArticleDto> articleDtoPage =  articleEntityPage.map(article -> {
+           return ArticleDto.fromEntity(article);
+        });*/
+        for (Article entity: articleEntityPage){
+            log.info(ArticleDto.fromEntity(entity).toString());
+        }
+
+        Page<ArticleDto> articleDtoPage = articleEntityPage
+                .map(ArticleDto:: fromEntity);
+        return articleDtoPage;
     }
     
     // READ ONE

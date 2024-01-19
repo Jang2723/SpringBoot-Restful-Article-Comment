@@ -1,8 +1,10 @@
 package com.example.article;
 
 import com.example.article.dto.ArticleDto;
+import com.example.article.entity.Article;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,9 +32,29 @@ public class ArticleController {
         return service.create(dto);
     }
 
-    @GetMapping
+   /* @GetMapping
     public List<ArticleDto> readAll() {
         return service.readAll();
+    }*/
+
+    /*@GetMapping
+    public List<ArticleDto> readAllPaged(
+            @RequestParam(value = "page", defaultValue = "1")
+            Integer page,
+            @RequestParam(value = "limit", defaultValue = "20")
+            Integer limit
+    ){
+        return service.readAllPaged(page, limit);
+    }*/
+
+    @GetMapping
+    public Page<ArticleDto> readAllPagination(
+            @RequestParam(value = "page", defaultValue = "1")
+            Integer page,
+            @RequestParam(value = "limit", defaultValue = "20")
+            Integer limit
+    ) {
+        return service.readAllPagination(page, limit);
     }
 
     @GetMapping("/{id}")

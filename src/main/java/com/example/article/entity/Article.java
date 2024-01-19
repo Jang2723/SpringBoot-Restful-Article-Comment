@@ -29,8 +29,8 @@ public class Article {
     @Setter
     private String writer;
 
-    @OneToMany
-    private List<Comment> comments = new ArrayList<>();
+    /*@OneToMany
+    private List<Comment> comments = new ArrayList<>();*/
 
     public Article(String title, String content, String writer) {
         this.title = title;
